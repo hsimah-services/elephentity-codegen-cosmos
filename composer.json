@@ -1,0 +1,11 @@
+{
+    "name": "elephentity/codegen-cosmos",
+    "description": "The Cosmos DB storage builder for Elephentity: compiles the IR into the C# storage manifest. Build-time only.",
+    "type": "library",
+    "license": "MIT",
+    "bin": [
+        "bin/eleph-gen-cosmos"
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
