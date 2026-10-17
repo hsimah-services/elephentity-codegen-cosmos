@@ -100,7 +100,8 @@ public sealed class GeneratedManifestTests
     [MemberData(nameof(Fixtures))]
     public async Task EveryManifestInstallsIntoAnEmptyContainer(string fixture)
     {
-        // The adaptor creates the container on first use of the emulator; reading nothing from it proves the layout stood up.
+        // The relation shapes share their conformance container (one install per container), so this is the install for
+        // clog and relations and a read for the rest; reading nothing from a fresh adaptor proves the layout stood up.
         var adaptor = Emulator.Adaptor(name => name switch
         {
             _ => fixture switch
@@ -112,7 +113,7 @@ public sealed class GeneratedManifestTests
                 "one-to-many" => Golden.OneToMany.CosmosStorageManifestFactory.Create(name),
                 _ => Golden.ManyToMany.CosmosStorageManifestFactory.Create(name),
             },
-        }, $"install-{fixture}");
+        }, fixture);
 
         var entity = Load(fixture).Entities.Keys.First();
 

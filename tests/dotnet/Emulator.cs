@@ -49,9 +49,7 @@ internal static class Emulator
         {
             if (Installed.Add(container))
             {
-                CosmosInstaller.InstallAsync(environment.Client, environment.Database, generated, cancellationToken: TestContext.Current.CancellationToken)
-                    .GetAwaiter()
-                    .GetResult();
+                Install(environment.Client, environment.Database, generated);
             }
         }
 
@@ -59,6 +57,29 @@ internal static class Emulator
         var isolated = new CosmosStorageManifest($"t-{Guid.NewGuid():N}", generated.Entities, generated.Orderings, generated.Container);
 
         return new CosmosAdaptor(environment.Client, environment.Database, isolated);
+    }
+
+    /// <summary>
+    /// The emulator is slow to create containers when it is busy, and answers 408 or 503 instead of waiting. A real account
+    /// does not, so this is a test-environment allowance, not something the adaptor does.
+    /// </summary>
+    private static void Install(CosmosClient client, string database, CosmosStorageManifest manifest)
+    {
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                CosmosInstaller.InstallAsync(client, database, manifest, cancellationToken: TestContext.Current.CancellationToken)
+                    .GetAwaiter()
+                    .GetResult();
+
+                return;
+            }
+            catch (CosmosException failure) when (attempt < 5 && failure.StatusCode is System.Net.HttpStatusCode.RequestTimeout or System.Net.HttpStatusCode.ServiceUnavailable)
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(5 * attempt));
+            }
+        }
     }
 
     public static async ValueTask ShutdownAsync()
