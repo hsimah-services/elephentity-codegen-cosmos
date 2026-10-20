@@ -1,3 +1,9 @@
+> **Archived: this repository moved into [`hsimah-services/elephentity`](https://github.com/hsimah-services/elephentity/tree/main/builders/codegen-cosmos).**
+> It is `builders/codegen-cosmos/` there, with the Cosmos builder. C# is now the primary target, and one repository lets a
+> change to the compiler, a builder and the .NET runtime land in one pull request, with one CI and one
+> set of issues. The history was not carried over; this repository keeps it, read-only. Releases are `eleph-gen-cosmos-v<version>` tags there; `eleph install` reads them from `hsimah-services/elephentity`.
+> Open issues and pull requests go to `elephentity`.
+
 # elephentity-codegen-cosmos
 
 The Azure Cosmos DB storage builder for [Elephentity](https://github.com/hsimah-services/elephentity): the compiled
